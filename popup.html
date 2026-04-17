@@ -340,12 +340,14 @@
 </div>
 
 <div class="section">
-  <div class="section-title" id="sectionTitle">DSGVO-BESCHWERDE GENERIEREN</div>
+  <div class="section-title" id="sectionTitle">DSGVO-BESCHWERDE SENDEN</div>
 
   <div class="field-row">
-    <label id="nameLabel">Ihr Name (optional)</label>
+    <label id="nameLabel">Ihr Name (für die Beschwerde)</label>
     <input type="text" id="userName" placeholder="Max Mustermann" />
   </div>
+
+  <p id="emailHint" style="font-size:10px; color:#666; margin-bottom:8px; line-height:1.5;"></p>
 
   <div class="btn-row">
     <button class="btn btn-primary" id="btnHamburg">HmbBfDI (Hamburg)</button>
@@ -354,11 +356,6 @@
   </div>
 
   <p id="hamburgNote" style="display:none; font-size:10px; color:#666; margin-top:8px; line-height:1.5;"></p>
-
-  <div class="textarea-wrap" id="complaintWrap">
-    <textarea id="complaintText" readonly></textarea>
-    <button class="copy-btn" id="copyBtn">Text kopieren</button>
-  </div>
 </div>
 
 <footer>
