@@ -56,5 +56,4 @@ MIT – Fork it, verbreite es, verbessere es.
 
 Pull Requests willkommen. Besonders gesucht:
 - Aktualisierte Extension-ID-Blacklists aus dem Fairlinked-Bericht
-- Übersetzungen (EN, FR)
 - Firefox-Manifest-V2-Kompatibilität
