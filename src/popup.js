@@ -1,15 +1,47 @@
 /**
  * LinkedIn Shield - Popup Script
+ * Auto-detects browser language (DE / EN / FR), falls back to EN.
  */
 
+import { detectLang } from './i18n.js';
+
 const STORAGE_KEY = 'liShieldLog';
+const t = detectLang();
 
 function fmt(ts) {
   if (!ts) return '—';
-  return new Date(ts).toLocaleString('de-DE', {
+  return new Date(ts).toLocaleString(t.locale, {
     day: '2-digit', month: '2-digit', year: '2-digit',
     hour: '2-digit', minute: '2-digit'
   });
+}
+
+function applyTranslations() {
+  document.getElementById('statusLabel').textContent = t.status;
+  document.getElementById('counterLabel').textContent = t.blockedLabel;
+  document.getElementById('firstScanLabel').textContent = t.firstScan;
+  document.getElementById('lastScanLabel').textContent = t.lastScan;
+  document.getElementById('sectionTitle').textContent = t.sectionTitle;
+  document.getElementById('nameLabel').textContent = t.nameLabel;
+  document.getElementById('userName').placeholder = t.namePlaceholder;
+  document.getElementById('btnDPC').textContent = t.btnDPC;
+  document.getElementById('btnClear').textContent = t.btnClear;
+  document.getElementById('githubLink').textContent = t.githubLink;
+
+  const btnHamburg = document.getElementById('btnHamburg');
+  if (t.showHamburg) {
+    btnHamburg.textContent = t.btnHamburg;
+    btnHamburg.style.display = '';
+  } else {
+    btnHamburg.style.display = 'none';
+    if (t.hamburgNote) {
+      const noteEl = document.getElementById('hamburgNote');
+      if (noteEl) {
+        noteEl.textContent = t.hamburgNote;
+        noteEl.style.display = '';
+      }
+    }
+  }
 }
 
 async function loadStats() {
@@ -28,143 +60,43 @@ async function loadStats() {
   return log;
 }
 
-function buildComplaintHamburg(count, first, last, name) {
-  const n = name || '[Ihr Name]';
-  const today = new Date().toLocaleDateString('de-DE');
-  return `An den
-Hamburgischen Beauftragten für Datenschutz
-und Informationsfreiheit (HmbBfDI)
-Ludwig-Erhard-Str. 22, 20459 Hamburg
-datenschutz@datenschutz.hamburg.de
-
-Betreff: DSGVO-Beschwerde gegen LinkedIn Germany GmbH
-Datum: ${today}
-
-Sehr geehrte Damen und Herren,
-
-ich, ${n}, erhebe hiermit Beschwerde gemäß Art. 77 DSGVO gegen
-LinkedIn Germany GmbH (Sitz: München) sowie LinkedIn Ireland
-Unlimited Company wegen des verdeckten Browser-Scannings.
-
-SACHVERHALT
-
-LinkedIn betreibt auf seinen Seiten ein JavaScript-System
-("Spectroscopy"), das bei jedem Seitenaufruf den Browser nach
-über 6.000 installierten Erweiterungen durchsucht, ohne dies
-in der Datenschutzerklärung offenzulegen oder eine Einwilligung
-einzuholen.
-
-Die Scan-Liste enthält Extensions, die Rückschlüsse auf
-religiöse Überzeugungen, politische Meinungen, Gesundheits-
-zustand und Neurodivergenz ermöglichen (Art. 9 DSGVO).
-
-MEIN NACHWEIS (LinkedIn Shield Extension):
-- Erster erfasster Scan: ${fmt(first)}
-- Letzter erfasster Scan: ${fmt(last)}
-- Blockierte Probe-Anfragen: ${count}
-
-RECHTLICHE EINORDNUNG
-1. Art. 5(1)(a) DSGVO – Transparenzverstoß (kein Hinweis in der
-   Datenschutzerklärung)
-2. Art. 6 DSGVO – Keine Rechtsgrundlage für die Verarbeitung
-3. Art. 9 DSGVO – Besondere Kategorien ohne ausdrückliche
-   Einwilligung verarbeitet
-4. § 202a StGB – Möglicher unbefugter Datenzugriff
-
-ICH BEANTRAGE
-- Einleitung eines Aufsichtsverfahrens gegen LinkedIn Germany GmbH
-- Anordnung der sofortigen Einstellung der Praxis
-- Information über Ergebnis gem. Art. 77(2) DSGVO
-
-Als Beweis lege ich die Log-Datei meiner Browser-Extension bei.
-
-Mit freundlichen Grüßen,
-${n}`;
-}
-
-function buildComplaintDPC(count, first, last, name) {
-  const n = name || '[Your Name]';
-  const today = new Date().toLocaleDateString('en-IE');
-  return `To: Data Protection Commission (DPC)
-21 Fitzwilliam Square South, Dublin 2, D02 RD28
-info@dataprotection.ie
-
-Subject: GDPR Complaint – LinkedIn Ireland / BrowserGate
-Date: ${today}
-
-Dear Commissioner,
-
-I, ${n}, lodge a complaint under Article 77 GDPR against:
-LinkedIn Ireland Unlimited Company, Wilton Place, Dublin 2
-
-FACTS
-
-LinkedIn runs a JavaScript system ("Spectroscopy") that silently
-scans visitors' browsers for over 6,000 browser extension IDs on
-every page load. This is not disclosed in LinkedIn's privacy policy
-and no consent is sought. The list includes extensions revealing
-religious beliefs, political opinions, and health conditions,
-constituting special-category data under Article 9 GDPR.
-
-EVIDENCE (LinkedIn Shield browser extension):
-- First probe detected: ${fmt(first)}
-- Most recent probe: ${fmt(last)}
-- Total blocked probes: ${count}
-
-LEGAL BASIS
-1. Art. 5(1)(a) GDPR – Transparency: practice absent from privacy policy
-2. Art. 6 GDPR – No lawful basis; legitimate interests cannot cover
-   processing of health/religion/political-opinion extension data
-3. Art. 9 GDPR – Special-category data processed without explicit consent
-4. Irish DPC is lead authority under Art. 56 GDPR (one-stop-shop)
-
-I REQUEST
-- Investigation into LinkedIn Ireland's browser scanning
-- Order to cease undisclosed special-category data processing
-- Outcome notification per Art. 77(2) GDPR
-
-Raw log file attached as evidence.
-
-Yours sincerely,
-${n}`;
-}
-
 async function init() {
-  const log = await loadStats();
+  applyTranslations();
 
+  const log = await loadStats();
   const first = log.length > 0 ? log[0].ts : null;
   const last  = log.length > 0 ? log[log.length - 1].ts : null;
 
-  const wrap = document.getElementById('complaintWrap');
+  const wrap     = document.getElementById('complaintWrap');
   const textArea = document.getElementById('complaintText');
-  const copyBtn = document.getElementById('copyBtn');
+  const copyBtn  = document.getElementById('copyBtn');
 
   function showComplaint(text) {
     textArea.value = text;
     wrap.classList.add('visible');
     copyBtn.classList.remove('copied');
-    copyBtn.textContent = 'Text kopieren';
+    copyBtn.textContent = t.copyBtn;
   }
 
   document.getElementById('btnHamburg').addEventListener('click', () => {
     const name = document.getElementById('userName').value.trim();
-    showComplaint(buildComplaintHamburg(log.length, first, last, name));
+    showComplaint(t.complaintHamburg(log.length, first, last, name, fmt));
   });
 
   document.getElementById('btnDPC').addEventListener('click', () => {
     const name = document.getElementById('userName').value.trim();
-    showComplaint(buildComplaintDPC(log.length, first, last, name));
+    showComplaint(t.complaintDPC(log.length, first, last, name, fmt));
   });
 
   copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(textArea.value).then(() => {
-      copyBtn.textContent = 'Kopiert!';
+      copyBtn.textContent = t.copiedBtn;
       copyBtn.classList.add('copied');
     });
   });
 
   document.getElementById('btnClear').addEventListener('click', async () => {
-    if (confirm('Log wirklich zurücksetzen? Alle Beweise gehen verloren.')) {
+    if (confirm(t.clearConfirm)) {
       await chrome.storage.local.set({ [STORAGE_KEY]: [] });
       location.reload();
     }
