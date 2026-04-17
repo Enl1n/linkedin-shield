@@ -17,17 +17,18 @@ function fmt(ts) {
 }
 
 function applyTranslations() {
-  document.getElementById('statusLabel').textContent   = t.status;
-  document.getElementById('counterLabel').textContent  = t.blockedLabel;
+  document.getElementById('statusLabel').textContent    = t.status;
+  document.getElementById('counterLabel').textContent   = t.blockedLabel;
   document.getElementById('firstScanLabel').textContent = t.firstScan;
   document.getElementById('lastScanLabel').textContent  = t.lastScan;
-  document.getElementById('sectionTitle').textContent  = t.sectionTitle;
-  document.getElementById('nameLabel').textContent     = t.nameLabel;
-  document.getElementById('userName').placeholder      = t.namePlaceholder;
-  document.getElementById('btnDPC').textContent        = t.btnDPC;
-  document.getElementById('btnClear').textContent      = t.btnClear;
-  document.getElementById('githubLink').textContent    = t.githubLink;
-  document.getElementById('emailHint').textContent     = t.emailHint;
+  document.getElementById('sectionTitle').textContent   = t.sectionTitle;
+  document.getElementById('nameLabel').textContent      = t.nameLabel;
+  document.getElementById('userName').placeholder       = t.namePlaceholder;
+  document.getElementById('btnDPC').textContent         = t.btnDPC;
+  document.getElementById('btnClear').textContent       = t.btnClear;
+  document.getElementById('githubLink').textContent     = t.githubLink;
+  document.getElementById('emailHint').textContent      = t.emailHint;
+  document.getElementById('copyBtn').textContent        = t.copyBtn;
 
   const btnHamburg = document.getElementById('btnHamburg');
   if (t.showHamburg) {
@@ -58,22 +59,19 @@ async function loadStats() {
   return log;
 }
 
-function downloadJSON(log) {
-  const json = JSON.stringify(log, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'linkedin-shield-evidence-' + new Date().toISOString().slice(0, 10) + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+function showComplaint(text) {
+  const wrap = document.getElementById('complaintWrap');
+  const ta   = document.getElementById('complaintText');
+  ta.value = text;
+  wrap.classList.add('visible');
 }
 
 function openMailto(email, subject, body) {
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.open(mailto, '_self');
+  // Use encodeURIComponent for proper UTF-8 encoding including umlauts and line breaks
+  const uri = 'mailto:' + email
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(body);
+  window.open(uri, '_self');
 }
 
 async function init() {
@@ -83,33 +81,33 @@ async function init() {
   const first = log.length > 0 ? log[0].ts : null;
   const last  = log.length > 0 ? log[log.length - 1].ts : null;
 
-  // Hamburg button (DE only)
   document.getElementById('btnHamburg').addEventListener('click', () => {
     const name = document.getElementById('userName').value.trim();
-    downloadJSON(log);
-    setTimeout(() => {
-      openMailto(
-        t.emailHamburg,
-        t.subjectHamburg,
-        t.bodyHamburg(log.length, first, last, name, fmt)
-      );
-    }, 300);
+    const body = t.bodyHamburg(log.length, first, last, name, fmt);
+    showComplaint(body);
+    setTimeout(() => openMailto(t.emailHamburg, t.subjectHamburg, body), 300);
   });
 
-  // DPC button (all languages)
   document.getElementById('btnDPC').addEventListener('click', () => {
     const name = document.getElementById('userName').value.trim();
-    downloadJSON(log);
-    setTimeout(() => {
-      openMailto(
-        t.emailDPC,
-        t.subjectDPC,
-        t.bodyDPC(log.length, first, last, name, fmt)
-      );
-    }, 300);
+    const body = t.bodyDPC(log.length, first, last, name, fmt);
+    showComplaint(body);
+    setTimeout(() => openMailto(t.emailDPC, t.subjectDPC, body), 300);
   });
 
-  // Clear
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const ta  = document.getElementById('complaintText');
+    const btn = document.getElementById('copyBtn');
+    navigator.clipboard.writeText(ta.value).then(() => {
+      btn.textContent = t.copiedBtn;
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = t.copyBtn;
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  });
+
   document.getElementById('btnClear').addEventListener('click', async () => {
     if (confirm(t.clearConfirm)) {
       await chrome.storage.local.set({ [STORAGE_KEY]: [] });
