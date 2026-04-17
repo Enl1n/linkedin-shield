@@ -324,26 +324,26 @@
 
 <div class="counter-section">
   <div class="counter-row">
-    <span class="counter-label">Blockierte Probe-Anfragen</span>
+    <span class="counter-label" id="counterLabel">BLOCKIERTE PROBE-ANFRAGEN</span>
     <span class="counter-value" id="scanCount">...</span>
   </div>
   <div class="dates">
     <div class="date-box">
-      <span class="label">Erster Scan</span>
+      <span class="label" id="firstScanLabel">ERSTER SCAN</span>
       <span class="value" id="firstDate">—</span>
     </div>
     <div class="date-box">
-      <span class="label">Letzter Scan</span>
+      <span class="label" id="lastScanLabel">LETZTER SCAN</span>
       <span class="value" id="lastDate">—</span>
     </div>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title">DSGVO-Beschwerde generieren</div>
+  <div class="section-title" id="sectionTitle">DSGVO-BESCHWERDE GENERIEREN</div>
 
   <div class="field-row">
-    <label>Ihr Name (optional)</label>
+    <label id="nameLabel">Ihr Name (optional)</label>
     <input type="text" id="userName" placeholder="Max Mustermann" />
   </div>
 
@@ -353,6 +353,8 @@
     <button class="btn btn-full" id="btnClear">Log zurücksetzen</button>
   </div>
 
+  <p id="hamburgNote" style="display:none; font-size:10px; color:#666; margin-top:8px; line-height:1.5;"></p>
+
   <div class="textarea-wrap" id="complaintWrap">
     <textarea id="complaintText" readonly></textarea>
     <button class="copy-btn" id="copyBtn">Text kopieren</button>
@@ -360,10 +362,10 @@
 </div>
 
 <footer>
-  <a href="https://github.com" target="_blank">GitHub (Open Source)</a>
+  <a href="https://github.com" target="_blank" id="githubLink">GitHub (Open Source)</a>
   <span class="tag">MIT License</span>
 </footer>
 
-<script src="src/popup.js"></script>
+<script type="module" src="src/popup.js"></script>
 </body>
 </html>
