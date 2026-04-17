@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Shield</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+    :root {
+      --red: #e8000d;
+      --dark: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #666;
+      --green: #00e676;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 380px;
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      background: var(--red);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+
+    .title-block h1 {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .title-block p {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      margin-top: 1px;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: #0a1a0a;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .status-label {
+      font-size: 11px;
+      color: var(--green);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .counter-section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .counter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .counter-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .counter-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .counter-value.zero { color: var(--green); font-size: 16px; }
+
+    .dates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .date-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 10px;
+    }
+
+    .date-box .label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .date-box .value {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--text);
+    }
+
+    .section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .field-row {
+      margin-bottom: 8px;
+    }
+
+    .field-row label {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .field-row input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 6px 8px;
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field-row input:focus {
+      border-color: var(--red);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #ff1a24; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface);
+      border-color: #444;
+    }
+
+    .btn-full {
+      grid-column: 1 / -1;
+      background: var(--surface);
+      color: var(--muted);
+      border-color: var(--border);
+      font-size: 10px;
+    }
+
+    .btn-full:hover {
+      color: var(--text);
+      border-color: #444;
+    }
+
+    .textarea-wrap {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .textarea-wrap.visible { display: block; }
+
+    .textarea-wrap textarea {
+      width: 100%;
+      height: 160px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 8px;
+      color: var(--text);
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      resize: vertical;
+      outline: none;
+      line-height: 1.5;
+    }
+
+    .copy-btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 7px;
+      background: #1a1a2e;
+      border: 1px solid #0066cc;
+      color: #4da6ff;
+      font-size: 11px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 600;
+    }
+
+    .copy-btn:hover { background: #0d1033; }
+    .copy-btn.copied { background: #0a1a0a; border-color: var(--green); color: var(--green); }
+
+    footer {
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer a {
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+    }
+
+    footer a:hover { color: var(--text); }
+
+    .tag {
+      font-size: 9px;
+      font-family: 'Space Mono', monospace;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LS</div>
+  <div class="title-block">
+    <h1>LinkedIn Shield</h1>
+    <p>BrowserGate Protection v1.0</p>
+  </div>
+</header>
+
+<div class="status-bar">
+  <div class="dot" id="statusDot"></div>
+  <span class="status-label" id="statusLabel">AKTIV — Scanning blockiert</span>
+</div>
+
+<div class="counter-section">
+  <div class="counter-row">
+    <span class="counter-label">Blockierte Probe-Anfragen</span>
+    <span class="counter-value" id="scanCount">...</span>
+  </div>
+  <div class="dates">
+    <div class="date-box">
+      <span class="label">Erster Scan</span>
+      <span class="value" id="firstDate">—</span>
+    </div>
+    <div class="date-box">
+      <span class="label">Letzter Scan</span>
+      <span class="value" id="lastDate">—</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">DSGVO-Beschwerde generieren</div>
+
+  <div class="field-row">
+    <label>Ihr Name (optional)</label>
+    <input type="text" id="userName" placeholder="Max Mustermann" />
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btnHamburg">HmbBfDI (Hamburg)</button>
+    <button class="btn btn-secondary" id="btnDPC">Irish DPC (Dublin)</button>
+    <button class="btn btn-full" id="btnClear">Log zurücksetzen</button>
+  </div>
+
+  <div class="textarea-wrap" id="complaintWrap">
+    <textarea id="complaintText" readonly></textarea>
+    <button class="copy-btn" id="copyBtn">Text kopieren</button>
+  </div>
+</div>
+
+<footer>
+  <a href="https://github.com" target="_blank">GitHub (Open Source)</a>
+  <span class="tag">MIT License</span>
+</footer>
+
+<script src="src/popup.js"></script>
+</body>
+</html>
